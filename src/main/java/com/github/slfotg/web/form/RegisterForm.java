@@ -45,4 +45,9 @@ public class RegisterForm {
         this.passwordVerify = passwordVerify;
     }
 
+    @Override
+    public String toString() {
+        return "RegisterForm [username=" + username + ", email=" + email + ", password=" + password
+                + ", passwordVerify=" + passwordVerify + "]";
+    }
 }
