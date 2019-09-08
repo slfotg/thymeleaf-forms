@@ -1,15 +1,22 @@
 package com.github.slfotg.web.form;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotEmpty;
 
-public class RegisterForm {
+public class RegisterForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotEmpty
     private String username;
+
     @NotEmpty
     private String email;
+
     @NotEmpty
     private String password;
+
     @NotEmpty
     private String passwordVerify;
 
