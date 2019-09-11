@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -15,6 +14,11 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <docker-maven-plugin.version>0.31.0</docker-maven-plugin.version>
+        <webjars-locator.version>0.36</webjars-locator.version>
+        <bootstrap.version>4.3.1</bootstrap.version>
+        <jquery.version>3.4.1</jquery.version>
+        <angularjs.version>1.7.7</angularjs.version>
     </properties>
 
     <dependencies>
@@ -35,25 +39,25 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
-            <version>0.36</version>
+            <version>${webjars-locator.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>4.3.1</version>
+            <version>${bootstrap.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.4.1</version>
+            <version>${jquery.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>angularjs</artifactId>
-            <version>1.7.7</version>
+            <version>${angularjs.version}</version>
         </dependency>
 
         <dependency>
@@ -61,18 +65,52 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
+        <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <spring.profiles.active>test</spring.profiles.active>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven-plugin.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>slfotg/${project.artifactId}</name>
+                            <build>
+                                <from>openjdk:8-jre</from>
+                                <assembly>
+                                    <descriptor>${basedir}/src/main/docker/assembly.xml</descriptor>
+                                </assembly>
+
+                                <env>
+                                    <SPRING_PROFILES_ACTIVE>test123</SPRING_PROFILES_ACTIVE>
+                                </env>
+                                <ports>
+                                    <port>8080</port>
+                                    <port>8080</port>
+                                </ports>
+                                <cmd>java -jar /maven/thymeleaf-forms.jar</cmd>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
         </plugins>
     </build>
